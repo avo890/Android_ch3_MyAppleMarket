@@ -1,5 +1,6 @@
 package com.example.myapplemarket
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
@@ -9,21 +10,23 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import com.example.myapplemarket.databinding.ActivityMainDetailBinding
 import com.google.android.material.snackbar.Snackbar
+import java.text.DecimalFormat
 
 class MainDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainDetailBinding
-    private var isLiked = false
+    private var isDetailLiked = false
 
     //메인 액티비티에서 Parcelize를 사용해 putExtra로 넘겨준 해당 포지션 데이터 자체를 받아오기
     private val productData: ProductItem? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("productData", ProductItem::class.java)
+            intent.getParcelableExtra(Constants.PRODUCT_DATA, ProductItem::class.java)
         } else {
-            intent.getParcelableExtra<ProductItem>("productData")
+            intent.getParcelableExtra<ProductItem>(Constants.PRODUCT_DATA)
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -36,12 +39,12 @@ class MainDetailActivity : AppCompatActivity() {
         binding.tvDetailLoca.text = productData?.tvLoca
         binding.tvDetailTitle.text = productData?.tvTitle
         binding.tvDetailDescription.text = productData?.tvDescription
-        binding.tvDetailPrice.text = productData?.tvPrice
+        binding.tvDetailPrice.text = DecimalFormat("#,###").format(productData?.tvPrice) + "원"
 
           //+`productData?.isLiked` 값이 `true`인 경우인지 비교하여 isLiked에 할당.
-        isLiked = productData?.isLiked == true
+        isDetailLiked = productData?.isLiked == true
         binding.ivDetailLiked.setImageResource(
-            if(isLiked) { R.drawable.item_heart_filled} else {R.drawable.item_heart}
+            if(isDetailLiked) { R.drawable.item_heart_filled} else {R.drawable.item_heart}
         )
 
         //뒤로가기 아이콘 눌렀을 때
@@ -55,23 +58,23 @@ class MainDetailActivity : AppCompatActivity() {
 
         //좋아요 아이콘 클릭시 아이콘 전환
         binding.ivDetailLiked.setOnClickListener {
-            if (!isLiked) {
+            if (!isDetailLiked) {
                 binding.ivDetailLiked.setImageResource(R.drawable.item_heart_filled)
                 Snackbar.make(it, "관심 목록에 추가되었습니다.", Snackbar.LENGTH_SHORT).show()
-                isLiked = true
+                isDetailLiked = true
             } else {
                 binding.ivDetailLiked.setImageResource(R.drawable.item_heart)
-                isLiked = false
+                isDetailLiked = false
             }
         }
     }
 
     //종료되었을 때 다시 메인액티비티로 좋아요에 대한 값 전송
     private fun exit() {
-        val dataPosition = intent.getIntExtra("dataPosition", 0)
+        val dataPosition = intent.getIntExtra(Constants.DATA_POSITION, 0)
         val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("dataPosition", dataPosition)
-        intent.putExtra("isLiked", isLiked)
+        intent.putExtra(Constants.DATA_POSITION, dataPosition)
+        intent.putExtra(Constants.IS_DETAIL_LIKED, isDetailLiked)
         setResult(RESULT_OK,intent)
         finish()
     }

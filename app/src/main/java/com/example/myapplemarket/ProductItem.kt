@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class ProductItem(
     val ivProduct:Int,
-    val tvPrice:String,
+    val tvPrice:Int,
     val tvTitle:String,
     val tvDescription : String,
     val tvSeller : String,

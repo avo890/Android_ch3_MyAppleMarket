@@ -1,11 +1,13 @@
 package com.example.myapplemarket
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplemarket.databinding.LayoutItemBinding
+import java.text.DecimalFormat
 
 class ProductAdapter (val productItem: MutableList<ProductItem>) : RecyclerView.Adapter<ProductAdapter.Holder>() {
 
@@ -36,6 +38,7 @@ class ProductAdapter (val productItem: MutableList<ProductItem>) : RecyclerView.
 
     override fun getItemCount(): Int = productItem.size
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: Holder, position: Int) {
 
         holder.itemView.setOnLongClickListener{
@@ -48,7 +51,7 @@ class ProductAdapter (val productItem: MutableList<ProductItem>) : RecyclerView.
         }
 
         holder.ivProduct.setImageResource(productItem[position].ivProduct)
-        holder.tvPrice.text = productItem[position].tvPrice
+        holder.tvPrice.text = DecimalFormat("#,###").format(productItem[position].tvPrice) + "원"
         holder.tvTitle.text = productItem[position].tvTitle
         holder.tvLoca.text = productItem[position].tvLoca
         holder.tvChat.text = productItem[position].tvChat.toString()
